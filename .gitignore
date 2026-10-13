@@ -1,0 +1,8 @@
+# Bỏ qua tệp cấu hình môi trường
+.env
+
+# Bỏ qua thư viện của Node.js
+node_modules/
+
+# Bỏ qua tệp log
+*.log
