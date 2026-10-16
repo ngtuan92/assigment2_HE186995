@@ -2,6 +2,7 @@ const express = require("express");
 const {
   getAllLoan,
   getLoanById,
+  getLoansByMemberId,
   createLoan,
   updateLoan,
   deleteLoan,
@@ -10,9 +11,8 @@ const {
 const routes = express.Router();
 
 routes.get("/api/loans", getAllLoan);
+routes.get("/api/loans/member/:memberId", getLoansByMemberId);
 routes.get("/api/loans/:id", getLoanById);
-routes.post("/api/loans", createLoan);
-routes.put("/api/loans/:id", updateLoan);
 routes.delete("/api/loans/:id", deleteLoan);
 
 

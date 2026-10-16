@@ -20,6 +20,18 @@ const getAllLoan = async (req, res) => {
   }
 };
 
+const getLoansByMemberId = async (req, res) => {
+  try {
+    const loans = await Loan.find({ member_id: req.params.memberId })
+      .populate("member_id", "fullName email phone membershipType")
+      .populate("items.book_id", "title author category isbn");
+
+    res.status(200).json({ success: true, data: loans });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Lỗi máy chủ", error: error.message });
+  }
+};
+
 const getLoanById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -217,6 +229,7 @@ const deleteLoan = async (req, res) => {
 module.exports = {
   getAllLoan,
   getLoanById,
+  getLoansByMemberId,
   createLoan,
   updateLoan,
   deleteLoan,
