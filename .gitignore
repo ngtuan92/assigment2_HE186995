@@ -1,5 +1,6 @@
 # Bỏ qua tệp cấu hình môi trường
 .env
+test-requests.json
 
 # Bỏ qua thư viện của Node.js
 node_modules/

@@ -14,7 +14,7 @@ const getAllLoan = async (req, res) => {
       .populate("member_id", "fullName email phone membershipType")
       .populate("items.book_id", "title author category isbn");
 
-    res.status(200).json({ success: true, count: loans.length, data: loans });
+    res.status(200).json({ success: true, data: loans });
   } catch (error) {
     res.status(500).json({ success: false, message: "Lỗi máy chủ", error: error.message });
   }

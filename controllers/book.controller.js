@@ -53,17 +53,38 @@ const createBook = async (req, res) => {
       });
     }
 
-    if (totalCopies !== undefined && Number(totalCopies) < 0) {
+    const isTotalCopiesNegative = totalCopies !== undefined && Number(totalCopies) < 0;
+    const isAvailableCopiesNegative = availableCopies !== undefined && Number(availableCopies) < 0;
+
+    if (isTotalCopiesNegative && isAvailableCopiesNegative) {
+      return res.status(400).json({
+        success: false,
+        message: "Số lượng bản sao và số lượng bản sao có sẵn không được là số âm",
+      });
+    }
+
+    if (isTotalCopiesNegative) {
       return res.status(400).json({
         success: false,
         message: "Số lượng bản sao không được là số âm",
       });
     }
 
-    if (availableCopies !== undefined && Number(availableCopies) < 0) {
+    if (isAvailableCopiesNegative) {
       return res.status(400).json({
         success: false,
         message: "Số lượng bản sao có sẵn không được là số âm",
+      });
+    }
+
+    const nextTotalCopies = totalCopies !== undefined ? Number(totalCopies) : 0;
+    const nextAvailableCopies = availableCopies !== undefined
+      ? Number(availableCopies)
+      : nextTotalCopies;
+    if (nextAvailableCopies > nextTotalCopies) {
+      return res.status(400).json({
+        success: false,
+        message: "Số bản sao có sẵn không được lớn hơn tổng số bản sao",
       });
     }
 
@@ -112,18 +133,47 @@ const updateBook = async (req, res) => {
   try {
     const { id } = req.params;
 
-    if (req.body.totalCopies !== undefined && Number(req.body.totalCopies) < 0) {
+    const isTotalNegative = req.body.totalCopies !== undefined && Number(req.body.totalCopies) < 0;
+    const isAvailableNegative = req.body.availableCopies !== undefined && Number(req.body.availableCopies) < 0;
+
+    if (isTotalNegative && isAvailableNegative) {
+      return res.status(400).json({
+        success: false,
+        message: "Số lượng bản sao và số lượng bản sao có sẵn không được là số âm",
+      });
+    }
+
+    if (isTotalNegative) {
       return res.status(400).json({
         success: false,
         message: "Số lượng bản sao không được là số âm",
       });
     }
 
-    if (req.body.availableCopies !== undefined && Number(req.body.availableCopies) < 0) {
+    if (isAvailableNegative) {
       return res.status(400).json({
         success: false,
         message: "Số lượng bản sao có sẵn không được là số âm",
       });
+    }
+
+    if (req.body.totalCopies !== undefined || req.body.availableCopies !== undefined) {
+      const currentBook = await Book.findById(id);
+      if (!currentBook) {
+        return res.status(404).json({ success: false, message: "Không tìm thấy sách" });
+      }
+      const nextTotalCopies = req.body.totalCopies !== undefined
+        ? Number(req.body.totalCopies)
+        : currentBook.totalCopies;
+      const nextAvailableCopies = req.body.availableCopies !== undefined
+        ? Number(req.body.availableCopies)
+        : currentBook.availableCopies;
+      if (nextAvailableCopies > nextTotalCopies) {
+        return res.status(400).json({
+          success: false,
+          message: "Số bản sao có sẵn không được lớn hơn tổng số bản sao",
+        });
+      }
     }
 
     if (req.body.isbn) {

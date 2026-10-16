@@ -46,6 +46,13 @@ const createMember = async (req, res) => {
       });
     }
 
+    if ([fullName, email, phone].some((value) => typeof value !== "string" || !value.trim())) {
+      return res.status(400).json({
+        success: false,
+        message: "fullName, email và phone phải là chuỗi không rỗng",
+      });
+    }
+
     const validMembershipTypes = ["Student", "Teacher", "Guest"];
     if (membershipType && !validMembershipTypes.includes(membershipType)) {
       return res.status(400).json({
@@ -91,6 +98,16 @@ const createMember = async (req, res) => {
 const updateMember = async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (["fullName", "email", "phone"].some(
+      (field) => req.body[field] !== undefined &&
+        (typeof req.body[field] !== "string" || !req.body[field].trim())
+    )) {
+      return res.status(400).json({
+        success: false,
+        message: "fullName, email và phone phải là chuỗi không rỗng",
+      });
+    }
 
     const validMembershipTypes = ["Student", "Teacher", "Guest"];
     if (
